@@ -8,11 +8,17 @@ namespace Kledex.Bus.ServiceBus.Factories
     public class MessageFactory : IMessageFactory
     {
         public static readonly string AssemblyQualifiedNamePropertyName = "AssemblyQualifiedName";
+        private readonly JsonSerializerSettings _serializerSettings;
+
+        public MessageFactory(JsonSerializerSettings serializerSettings)
+        {
+            _serializerSettings = serializerSettings;
+        }
 
         /// <inheritdoc />
         public Message CreateMessage<TMessage>(TMessage message) where TMessage : IBusMessage
         {
-            var json = JsonConvert.SerializeObject(message);
+            var json = JsonConvert.SerializeObject(message, _serializerSettings);
             var serviceBusMessage = new Message(Encoding.UTF8.GetBytes(json))
             {
                 ContentType = "application/json"

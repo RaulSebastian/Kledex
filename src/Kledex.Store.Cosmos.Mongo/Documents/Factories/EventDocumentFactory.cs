@@ -6,6 +6,13 @@ namespace Kledex.Store.Cosmos.Mongo.Documents.Factories
 {
     public class EventDocumentFactory : IEventDocumentFactory
     {
+        private readonly JsonSerializerSettings _serializerSettings;
+
+        public EventDocumentFactory(JsonSerializerSettings serializerSettings)
+        {
+            _serializerSettings = serializerSettings;
+        }
+
         public EventDocument CreateEvent(IDomainEvent @event, long version)
         {
             return new EventDocument
@@ -15,7 +22,7 @@ namespace Kledex.Store.Cosmos.Mongo.Documents.Factories
                 CommandId = @event.CommandId.ToString(),
                 Sequence = version,
                 Type = @event.GetType().AssemblyQualifiedName,
-                Data = JsonConvert.SerializeObject(@event),
+                Data = JsonConvert.SerializeObject(@event, _serializerSettings),
                 TimeStamp = @event.TimeStamp,
                 UserId = @event.UserId,
                 Source = @event.Source
